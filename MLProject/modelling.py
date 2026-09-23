@@ -11,9 +11,14 @@ def train():
     # Enable Autologging
     mlflow.autolog()
     
+    # Menentukan base directory relatif terhadap lokasi file modelling.py
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    train_path = os.path.join(base_dir, 'BNPL_preprocessing', 'train_clean.csv')
+    test_path = os.path.join(base_dir, 'BNPL_preprocessing', 'test_clean.csv')
+
     # Load Preprocessed Data
-    train_df = pd.read_csv('BNPL_preprocessing/train_clean.csv')
-    test_df = pd.read_csv('BNPL_preprocessing/test_clean.csv')
+    train_df = pd.read_csv(train_path)
+    test_df = pd.read_csv(test_path)
     
     X_train = train_df.drop(columns=['Default_Risk'])
     y_train = train_df['Default_Risk']
