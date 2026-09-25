@@ -22,15 +22,17 @@ def train():
     y_test = test_df['Default_Risk']
     
     # 3. Model Training
-    # Jika dipanggil via `mlflow run`, run sudah aktif, jika tidak maka buat run baru
-    active_run = mlflow.active_run()
-    if active_run:
-        model = RandomForestClassifier(random_state=42)
+    # Jika dijalankan lewat `mlflow run`, MLflow secara otomatis mengelola pencatatan run.
+    # Kita tidak perlu memanggil mlflow.start_run() jika MLFLOW_RUN_ID ada di environment.
+    model = RandomForestClassifier(random_state=42)
+    
+    if "MLFLOW_RUN_ID" in os.environ:
+        # Dieksekusi via `mlflow run` (CI Environment)
         model.fit(X_train, y_train)
     else:
+        # Dieksekusi langsung via `python modelling.py`
         mlflow.set_experiment("BNPL_CI_Automation")
         with mlflow.start_run(run_name="CI_ReTraining_Run"):
-            model = RandomForestClassifier(random_state=42)
             model.fit(X_train, y_train)
 
 if __name__ == '__main__':
